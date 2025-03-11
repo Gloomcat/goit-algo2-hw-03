@@ -25,10 +25,10 @@ def add_item_to_dict(dict_store: dict[int, dict], item: dict[str, str]) -> None:
 # OOBTree keys (ref https://btrees.readthedocs.io/en/latest/api.html#BTrees.OOBTree.OOBTree.items).
 # In order to correctly analyze struct's performance we apply range to keys.
 def range_query_tree(tree_store: OOBTree, low: int, high: int):
-    return {k: v for k, v in tree_store.items(min=low, max=high)}
+    return list(tree_store.items(min=low, max=high))
 
 def range_query_dict(dict_store: dict[int, dict], low: int, high: int):
-    return {k: v for k, v in dict_store.items() if low <= k <= high}
+    return [(k, v) for k, v in dict_store.items() if low <= k <= high]
 
 if __name__ == "__main__":
     tree_store = OOBTree()
@@ -45,8 +45,10 @@ if __name__ == "__main__":
     low = 1000
     high = 10000
 
-    time_tree = timeit.timeit(partial(range_query_tree, tree_store, low, high), number=100)
+    time_tree = timeit.timeit(
+        partial(range_query_tree, tree_store, low, high), number=100)
     print(f"Total range_query time for OOBTree: {time_tree} seconds")
 
-    time_dict = timeit.timeit(partial(range_query_dict, dict_store, low, high), number=100)
+    time_dict = timeit.timeit(
+        partial(range_query_dict, dict_store, low, high), number=100)
     print(f"Total range_query time for Dict: {time_dict} seconds")
